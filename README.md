@@ -37,9 +37,10 @@ mvn spring-boot:run
 ```
 veya IDE üzerinden BookapiApplication.java dosyasını çalıştırarak başlatabilirsin.
 
-## Örnek POST
 
-```json
+## 🧪 Örnek POST
+
+```http
 POST /api/books
 Content-Type: application/json
 
