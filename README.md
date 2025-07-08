@@ -33,12 +33,13 @@ RESTful API yapısı sayesinde kitap ekleme, listeleme, güncelleme ve silme iş
 ## ▶️ Uygulamayı Çalıştırma
 
 ```bash
-mvn spring-boot:run veya IDE üzerinden BookapiApplication.java dosyasını çalıştırarak başlatabilirsin.
+mvn spring-boot:run
+```
+veya IDE üzerinden BookapiApplication.java dosyasını çalıştırarak başlatabilirsin.
 
-Örnek POST
-json
-Copy
-Edit
+## Örnek POST
+
+```json
 POST /api/books
 Content-Type: application/json
 
@@ -47,6 +48,7 @@ Content-Type: application/json
   "author": "Victor Hugo",
   "publicationYear": 1862
 }
+```
 
 ---
 
