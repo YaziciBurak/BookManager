@@ -8,13 +8,14 @@ RESTful API yapısı sayesinde kitap ekleme, listeleme, güncelleme ve silme iş
 ## 🚀 Kullanılan Teknolojiler
 
 - Java 17  
-- Spring Boot 3.5.3  
+- Spring Boot 3.1.5  
 - Spring Web (REST API)  
 - Spring Data JPA  
 - H2 In-Memory Database  
 - Lombok  
 - Jakarta Bean Validation  
 - Maven
+- Swagger
 
 ---
 
