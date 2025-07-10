@@ -1,29 +1,14 @@
 package com.example.bookapi.dto;
 
-import com.example.bookapi.model.Book;
+import com.example.bookapi.entity.Book;
+import org.mapstruct.*;
 
-public class BookMapper {
+@Mapper(componentModel = "spring")
+public interface BookMapper {
 
-    public static BookResponseDto toDto(Book book) {
-        return BookResponseDto.builder()
-                .id(book.getId())
-                .title(book.getTitle())
-                .author(book.getAuthor())
-                .publicationYear(book.getPublicationYear())
-                .build();
-    }
+    BookResponseDto toDto(Book book);
 
-    public static Book toEntity(BookRequestDto dto) {
-        return Book.builder()
-                .title(dto.getTitle())
-                .author(dto.getAuthor())
-                .publicationYear(dto.getPublicationYear())
-                .build();
-    }
+    Book toEntity(BookRequestDto dto);
 
-    public static void updateEntity(Book entity, BookRequestDto dto) {
-        entity.setTitle(dto.getTitle());
-        entity.setAuthor(dto.getAuthor());
-        entity.setPublicationYear(dto.getPublicationYear());
-    }
+    void updateEntity(@MappingTarget Book entity, BookRequestDto dto);
 }

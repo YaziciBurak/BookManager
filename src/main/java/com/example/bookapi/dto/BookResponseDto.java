@@ -1,10 +1,12 @@
 package com.example.bookapi.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 @Data
-@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class BookResponseDto {
     private Long id;
     private String title;
