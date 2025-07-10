@@ -1,4 +1,4 @@
-package com.example.bookapi.model;
+package com.example.bookapi.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
