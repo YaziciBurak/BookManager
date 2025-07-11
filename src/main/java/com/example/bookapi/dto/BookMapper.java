@@ -3,12 +3,11 @@ package com.example.bookapi.dto;
 import com.example.bookapi.entity.Book;
 import org.mapstruct.*;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface BookMapper {
 
     BookResponseDto toDto(Book book);
 
-    @Mapping(target = "id", ignore = true)
     Book toEntity(BookRequestDto dto);
 
     void updateEntity(@MappingTarget Book entity, BookRequestDto dto);
