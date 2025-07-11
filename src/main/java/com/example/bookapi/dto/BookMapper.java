@@ -8,6 +8,7 @@ public interface BookMapper {
 
     BookResponseDto toDto(Book book);
 
+    @Mapping(target = "id", ignore = true)
     Book toEntity(BookRequestDto dto);
 
     void updateEntity(@MappingTarget Book entity, BookRequestDto dto);
