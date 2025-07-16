@@ -19,42 +19,81 @@ RESTful API yapısı sayesinde kitap ekleme, listeleme, güncelleme ve silme iş
 
 ---
 
-## 📂 API Özellikleri
+## 🔐 API Özellikleri
 
-- ✅ Kitap oluşturma (POST `/api/books`)
-- ✅ Tüm kitapları listeleme (GET `/api/books`)
-- ✅ ID ile kitap getirme (GET `/api/books/{id}`)
-- ✅ Kitap güncelleme (PUT `/api/books/{id}`)
-- ✅ Kitap silme (DELETE `/api/books/{id}`)
-- ✅ DTO yapısıyla veri transferi
-- ✅ Validasyon ve global hata yönetimi
+- Kullanıcı kayıt & giriş – JWT & Refresh Token
+- Access token kısa ömürlü, Refresh token ile yenilenir
+- Tüm kitapları listeleme (GET `/api/books`)
+- Tüm kitap CRUD işlemleri yalnızca **doğrulanmış kullanıcılar** tarafından yapılabilir  
+- Kitap CRUD işlemleri  
+  - `POST /api/books` – kitap ekleme  
+  - `GET /api/books` – tüm kitapları listeleme  
+  - `GET /api/books/{id}` – ID ile kitap getirme  
+  - `PUT /api/books/{id}` – kitap güncelleme  
+  - `DELETE /api/books/{id}` – kitap silme  
+- DTO & Validasyon & Global hata yönetimi  
+- Swagger UI ile test edilebilir
 
 ---
 
 ## ▶️ Uygulamayı Çalıştırma
 
+### 1. Terminal Üzerinden
+
 ```bash
+git clone https://github.com/YaziciBurak/BookManager.git
+cd BookManager
 mvn spring-boot:run
 ```
-veya IDE üzerinden BookapiApplication.java dosyasını çalıştırarak başlatabilirsin.
+2. IDE Üzerinden
+BookapiApplication.java dosyasını çalıştırarak uygulamayı başlatabilirsiniz.
+
+🔍 Swagger UI
+API'yi görsel olarak test etmek için:
+http://localhost:8080/swagger-ui/index.html
 
 
-## 🧪 Örnek POST
+## 🧪 API Testi Örnekleri
+
+### 🔐 Auth
 
 ```http
-POST /api/books
-Content-Type: application/json
-
+POST /api/auth/register
 {
-  "title": "Sefiller",
-  "author": "Victor Hugo",
-  "publicationYear": 1862
+  "username": "test",
+  "password": "123"
+}
+
+POST /api/auth/login
+{
+  "username": "test",
+  "password": "123"
+}
+
+POST /api/auth/refresh-token
+{
+  "refreshToken": "<refresh token burada>"
 }
 ```
 
+📚 Kitap Ekleme (JWT gereklidir)
+
+```
+POST /api/books
+Authorization: Bearer <access_token>
+
+{
+  "title": "The Witcher",
+  "author": "Andrzej Sapkowski",
+  "publicationYear": 1948
+}
+```
+
+➡️ Diğer CRUD işlemleri için Swagger arayüzünü kullanabilirsiniz.
+
 ---
 
-## 🙏 Not
+##  Not
 
 Kendi gelişimim için oluşturduğum basit bir Spring Boot projesidir.
 
