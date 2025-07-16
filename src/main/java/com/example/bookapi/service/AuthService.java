@@ -3,6 +3,7 @@ package com.example.bookapi.service;
 import com.example.bookapi.dto.LoginRequest;
 import com.example.bookapi.dto.RegisterRequest;
 import com.example.bookapi.dto.AuthResponse;
+import com.example.bookapi.entity.RefreshToken;
 import com.example.bookapi.entity.Role;
 import com.example.bookapi.entity.User;
 import com.example.bookapi.repository.RoleRepository;
@@ -24,6 +25,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final RefreshTokenService refreshTokenService;
 
     public AuthResponse register(RegisterRequest request) {
         Role userRole = roleRepository.findByName("ROLE_USER")
@@ -36,14 +38,26 @@ public class AuthService {
 
         userRepository.save(user);
 
-        String token = jwtService.generateToken(user.getUsername());
-        return new AuthResponse(token);
+        String accessToken = jwtService.generateToken(user.getUsername());
+        String refreshToken = refreshTokenService.createRefreshToken(request.getUsername()).getToken();
+        return new AuthResponse(accessToken, refreshToken);
     }
+
     public AuthResponse login(LoginRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(),request.getPassword())
         );
-        String token = jwtService.generateToken(request.getUsername());
-        return new AuthResponse(token);
+        String accessToken = jwtService.generateToken(request.getUsername());
+        String refreshToken = refreshTokenService.createRefreshToken(request.getUsername()).getToken();
+        return new AuthResponse(accessToken, refreshToken);
+    }
+
+    public AuthResponse refreshToken(String requestRefreshToken) {
+        RefreshToken refreshToken = refreshTokenService.findByToken(requestRefreshToken)
+                .map(refreshTokenService::verifyExpiration)
+                .orElseThrow(() -> new RuntimeException("Invalid refresh token"));
+
+        String newAccessToken = jwtService.generateToken(refreshToken.getUser().getUsername());
+        return new AuthResponse(newAccessToken, requestRefreshToken);
     }
 }

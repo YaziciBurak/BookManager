@@ -3,15 +3,17 @@ package com.example.bookapi.controller;
 import com.example.bookapi.dto.BookRequestDto;
 import com.example.bookapi.dto.BookResponseDto;
 import com.example.bookapi.service.BookService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/books")
+@SecurityRequirement(name = "bearerAuth")
 public class BookController {
 
     private final BookService bookService;
@@ -38,6 +40,7 @@ public class BookController {
         return bookService.createBook(requestDto);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     @Operation(description = "Verilen ID'ye sahip kitabı siler.")
     public void deleteBook(@PathVariable Long id){
