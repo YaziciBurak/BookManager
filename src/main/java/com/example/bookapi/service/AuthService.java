@@ -1,13 +1,18 @@
 package com.example.bookapi.service;
 
+import com.example.bookapi.constants.ErrorMessages;
 import com.example.bookapi.dto.LoginRequest;
 import com.example.bookapi.dto.RegisterRequest;
 import com.example.bookapi.dto.AuthResponse;
 import com.example.bookapi.entity.RefreshToken;
 import com.example.bookapi.entity.Role;
 import com.example.bookapi.entity.User;
+import com.example.bookapi.exception.InvalidRefreshTokenException;
+import com.example.bookapi.exception.UserNotFoundException;
+import com.example.bookapi.exception.UsernameAlreadyExistsException;
 import com.example.bookapi.repository.RoleRepository;
 import com.example.bookapi.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,8 +33,13 @@ public class AuthService {
     private final RefreshTokenService refreshTokenService;
 
     public AuthResponse register(RegisterRequest request) {
+
+        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
+            throw new UsernameAlreadyExistsException(ErrorMessages.USERNAME_ALREADY_EXISTS);
+        }
+
         Role userRole = roleRepository.findByName("ROLE_USER")
-                .orElseThrow(() -> new RuntimeException("Default role not found"));
+                .orElseThrow(() -> new RuntimeException(ErrorMessages.DEFAULT_ROLE_NOT_FOUND));
 
         User user = User.builder().username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
@@ -44,6 +54,9 @@ public class AuthService {
     }
 
     public AuthResponse login(LoginRequest request) {
+        userRepository.findByUsername(request.getUsername())
+                        .orElseThrow(() -> new UserNotFoundException(request.getUsername()));
+
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(),request.getPassword())
         );
@@ -52,12 +65,19 @@ public class AuthService {
         return new AuthResponse(accessToken, refreshToken);
     }
 
+    @Transactional
     public AuthResponse refreshToken(String requestRefreshToken) {
-        RefreshToken refreshToken = refreshTokenService.findByToken(requestRefreshToken)
-                .map(refreshTokenService::verifyExpiration)
-                .orElseThrow(() -> new RuntimeException("Invalid refresh token"));
+        RefreshToken oldRefreshToken  = refreshTokenService.findByToken(requestRefreshToken)
+                .orElseThrow(() -> new InvalidRefreshTokenException(ErrorMessages.INVALID_REFRESH_TOKEN));
 
-        String newAccessToken = jwtService.generateToken(refreshToken.getUser().getUsername());
-        return new AuthResponse(newAccessToken, requestRefreshToken);
+        refreshTokenService.verifyExpiration(oldRefreshToken);
+
+        refreshTokenService.deleteByToken(requestRefreshToken);
+
+        RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(oldRefreshToken.getUser().getUsername());
+
+        String newAccessToken = jwtService.generateToken(newRefreshToken.getUser().getUsername());
+
+        return new AuthResponse(newAccessToken, newRefreshToken.getToken());
     }
 }

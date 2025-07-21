@@ -18,7 +18,7 @@ public class JwtService {
 
     private Key secretKey;
 
-    private static final long EXPRATION_TIME_MS = 1000 * 60 * 60;
+    private static final long EXPIRATION_TIME_MS = 1000 * 60 * 60;
 
     @PostConstruct
     public void initKey() {
@@ -29,7 +29,7 @@ public class JwtService {
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + EXPRATION_TIME_MS))
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME_MS))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }

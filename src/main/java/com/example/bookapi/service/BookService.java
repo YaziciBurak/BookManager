@@ -6,20 +6,19 @@ import com.example.bookapi.exception.BookNotFoundException;
 import com.example.bookapi.entity.Book;
 import com.example.bookapi.dto.BookMapper;
 import com.example.bookapi.repository.BookRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class BookService {
 
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
 
-    public BookService(BookRepository bookRepository, BookMapper bookMapper) {
-        this.bookRepository = bookRepository;
-        this.bookMapper = bookMapper;
-    }
 
     public List<BookResponseDto> getAllBooks() {
         return bookRepository.findAll().stream().map(bookMapper::toDto).toList();
@@ -30,12 +29,14 @@ public class BookService {
         return bookMapper.toDto(book);
     }
 
+    @Transactional
     public BookResponseDto createBook(BookRequestDto dto) {
         Book book = bookMapper.toEntity(dto);
         Book saved = bookRepository.save(book);
         return bookMapper.toDto(saved);
     }
 
+    @Transactional
     public void deleteBook(Long id) {
         if (!bookRepository.existsById(id)) {
             throw new BookNotFoundException(id);
@@ -43,6 +44,7 @@ public class BookService {
         bookRepository.deleteById(id);
     }
 
+    @Transactional
     public BookResponseDto updateBook(Long id, BookRequestDto dto) {
         Book existing = bookRepository.findById(id).orElseThrow(()-> new BookNotFoundException(id));
         bookMapper.updateEntity(existing, dto);
