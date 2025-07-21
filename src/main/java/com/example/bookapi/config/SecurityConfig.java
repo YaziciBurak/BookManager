@@ -1,5 +1,7 @@
 package com.example.bookapi.config;
 
+import com.example.bookapi.security.CustomAccessDeniedHandler;
+import com.example.bookapi.security.CustomAuthenticationEntryPoint;
 import com.example.bookapi.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -26,7 +28,6 @@ public class SecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     private final CustomAccessDeniedHandler accessDeniedHandler;
-
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

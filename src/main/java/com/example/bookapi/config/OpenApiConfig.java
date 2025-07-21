@@ -15,7 +15,7 @@ public class OpenApiConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI().info(new Info().title("Book API")
                 .version("1.0")
-                .description("Kitap yönetim API'si"))
+                .description("Book managment API"))
                 .components(new Components()
                         .addSecuritySchemes("bearerAuth",
                                 new SecurityScheme()

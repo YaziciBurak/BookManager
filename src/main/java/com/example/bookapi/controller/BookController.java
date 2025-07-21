@@ -23,32 +23,32 @@ public class BookController {
     }
 
     @GetMapping
-    @Operation(description = "Veritabanındaki tüm kitap kayıtlarını listeler.")
+    @Operation(description = "Lists all book records in the database.")
     public List<BookResponseDto> getAll(){
         return bookService.getAllBooks();
     }
 
     @GetMapping("/{id}")
-    @Operation(description = "Verilen ID'ye sahip kitabı getirir.")
+    @Operation(description = "Retrieves the book with the specified ID.")
     public BookResponseDto getById(@PathVariable Long id){
         return bookService.getBookById(id);
     }
 
     @PostMapping
-    @Operation(description = "Verilen bilgileri kullanarak yeni bir kitap kaydı oluşturur.")
+    @Operation(description = "Creates a new book record with the provided information.")
     public BookResponseDto createBook(@RequestBody @Valid BookRequestDto requestDto){
         return bookService.createBook(requestDto);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
-    @Operation(description = "Verilen ID'ye sahip kitabı siler.")
+    @Operation(description = "Deletes the book with the specified ID.")
     public void deleteBook(@PathVariable Long id){
         bookService.deleteBook(id);
     }
 
     @PutMapping("/{id}")
-    @Operation(description = "Verilen ID'ye sahip kitabın bilgilerini günceller.")
+    @Operation(description = "Updates the information of the book with the specified ID.")
     public BookResponseDto  updateBook(@PathVariable Long id,@RequestBody @Valid BookRequestDto dto){
         return bookService.updateBook(id, dto);
     }
