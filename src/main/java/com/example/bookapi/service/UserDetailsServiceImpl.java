@@ -3,8 +3,8 @@ package com.example.bookapi.service;
 import com.example.bookapi.constants.ErrorMessages;
 import com.example.bookapi.entity.User;
 import com.example.bookapi.repository.UserRepository;
+import com.example.bookapi.security.CustomerUserDetails;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
 
@@ -20,12 +20,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(ErrorMessages.USER_NOT_FOUND + username));
 
-        return new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
-                user.getPassword(),
-                user.getRoles().stream()
-                        .map(role -> new SimpleGrantedAuthority(role.getName()))
-                        .toList()
-        );
+        return new CustomerUserDetails(user);
     }
 }
