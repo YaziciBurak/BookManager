@@ -34,6 +34,7 @@ public class BookController {
         return bookService.getBookById(id);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     @Operation(description = "Creates a new book record with the provided information.")
     public BookResponseDto createBook(@RequestBody @Valid BookRequestDto requestDto){

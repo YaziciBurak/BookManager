@@ -3,6 +3,7 @@ package com.example.bookapi.service;
 import com.example.bookapi.constants.ErrorMessages;
 import com.example.bookapi.entity.RefreshToken;
 import com.example.bookapi.entity.User;
+import com.example.bookapi.exception.RefreshTokenExpiredException;
 import com.example.bookapi.repository.RefreshTokenRepository;
 import com.example.bookapi.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -49,7 +50,7 @@ public class RefreshTokenService {
     public RefreshToken verifyExpiration(RefreshToken token) {
         if(token.getExpiryDate().isBefore(Instant.now())) {
             refreshTokenRepository.delete(token);
-            throw new RuntimeException(ErrorMessages.REFRESH_TOKEN_EXPIRED);
+            throw new RefreshTokenExpiredException(ErrorMessages.REFRESH_TOKEN_EXPIRED);
         }
         return token;
     }
