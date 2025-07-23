@@ -2,6 +2,7 @@ package com.example.bookapi;
 
 import com.example.bookapi.entity.Role;
 import com.example.bookapi.entity.User;
+import com.example.bookapi.enums.RoleType;
 import com.example.bookapi.repository.RoleRepository;
 import com.example.bookapi.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -23,14 +24,15 @@ public class BookapiApplication {
 	public CommandLineRunner addDefaults(RoleRepository roleRepository,
 										 UserRepository userRepository,
 										 PasswordEncoder passwordEncoder) {
-		return args -> { if (roleRepository.findByName("ROLE_USER").isEmpty()) {
-			roleRepository.save(new Role(null, "ROLE_USER"));
+		return args -> {
+			if (roleRepository.findByName(RoleType.ROLE_USER).isEmpty()) {
+			roleRepository.save(Role.builder().name(RoleType.ROLE_USER).build());
 		}
-		if (roleRepository.findByName("ROLE_ADMIN").isEmpty()) {
-			roleRepository.save(new Role(null, "ROLE_ADMIN"));
+		if (roleRepository.findByName(RoleType.ROLE_USER).isEmpty()) {
+			roleRepository.save(Role.builder().name(RoleType.ROLE_ADMIN).build());
 		}
 		if(userRepository.findByUsername("admin").isEmpty()) {
-			Role adminRole = roleRepository.findByName("ROLE_ADMIN").get();
+			Role adminRole = roleRepository.findByName(RoleType.ROLE_ADMIN).orElseThrow();
 
 			User admin = User.builder()
 					.username("admin")
