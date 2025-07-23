@@ -7,6 +7,7 @@ import com.example.bookapi.dto.AuthResponse;
 import com.example.bookapi.entity.RefreshToken;
 import com.example.bookapi.entity.Role;
 import com.example.bookapi.entity.User;
+import com.example.bookapi.enums.RoleType;
 import com.example.bookapi.exception.InvalidRefreshTokenException;
 import com.example.bookapi.exception.UserNotFoundException;
 import com.example.bookapi.exception.UsernameAlreadyExistsException;
@@ -38,7 +39,7 @@ public class AuthService {
             throw new UsernameAlreadyExistsException(ErrorMessages.USERNAME_ALREADY_EXISTS);
         }
 
-        Role userRole = roleRepository.findByName("ROLE_USER")
+        Role userRole = roleRepository.findByName(RoleType.ROLE_USER)
                 .orElseThrow(() -> new RuntimeException(ErrorMessages.DEFAULT_ROLE_NOT_FOUND));
 
         User user = User.builder().username(request.getUsername())
