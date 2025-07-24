@@ -12,4 +12,5 @@ public class ErrorMessages {
     public static final String ROLE_NOT_FOUND = "Role not found.";
     public static final String REFRESH_TOKEN_EXPIRED = "Refresh token has expired.";
     public static final String DEFAULT_ROLE_NOT_FOUND = "Default role not found.";
+    public static final String TOKEN_REVOKED = "Error: Token is revoked";
 }
