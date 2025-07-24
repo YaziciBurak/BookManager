@@ -60,4 +60,8 @@ public class JwtService {
         final String username = extractUsername(token);
         return (username.equals(expectedUsername) && !isTokenExpired(token));
     }
+
+    public Date extractExpiration(String token) {
+        return extractClaim(token, Claims::getExpiration);
+    }
 }

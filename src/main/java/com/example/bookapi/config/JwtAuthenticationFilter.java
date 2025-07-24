@@ -1,6 +1,8 @@
 package com.example.bookapi.config;
 
+import com.example.bookapi.constants.ErrorMessages;
 import com.example.bookapi.service.JwtService;
+import com.example.bookapi.service.TokenBlacklistService;
 import com.example.bookapi.service.UserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -21,6 +23,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsServiceImpl userDetailsService;
+    private final TokenBlacklistService tokenBlacklistService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -48,6 +51,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         jwt = authHeader.substring(7);
+
+        if(tokenBlacklistService.isTokenBlacklisted(jwt)) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write(ErrorMessages.TOKEN_REVOKED);
+        }
+
         userName = jwtService.extractUsername(jwt);
 
         if(userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
