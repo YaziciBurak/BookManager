@@ -1,4 +1,4 @@
-package com.example.bookapi.config;
+package com.example.bookapi.security;
 
 import com.example.bookapi.constants.ErrorMessages;
 import com.example.bookapi.service.JwtService;
