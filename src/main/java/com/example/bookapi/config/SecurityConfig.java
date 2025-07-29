@@ -2,8 +2,11 @@ package com.example.bookapi.config;
 
 import com.example.bookapi.security.CustomAccessDeniedHandler;
 import com.example.bookapi.security.CustomAuthenticationEntryPoint;
+import com.example.bookapi.security.JwtAuthenticationFilter;
+import com.example.bookapi.security.RateLimitFilter;
 import com.example.bookapi.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,9 +33,17 @@ public class SecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     private final CustomAccessDeniedHandler accessDeniedHandler;
+    private final RateLimitFilter rateLimitFilter;
+
+    @Value("${app.security.require-https:false}")
+    private boolean requireHttps;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        if(requireHttps) {
+            http.requiresChannel(channel ->
+                    channel.anyRequest().requiresSecure());
+        }
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
@@ -51,6 +62,7 @@ public class SecurityConfig {
                         .authenticationEntryPoint(authenticationEntryPoint)
                         .accessDeniedHandler(accessDeniedHandler)
                 )
+                .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
