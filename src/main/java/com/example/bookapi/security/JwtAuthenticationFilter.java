@@ -55,6 +55,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if(tokenBlacklistService.isTokenBlacklisted(jwt)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write(ErrorMessages.TOKEN_REVOKED);
+            return;
         }
 
         userName = jwtService.extractUsername(jwt);
