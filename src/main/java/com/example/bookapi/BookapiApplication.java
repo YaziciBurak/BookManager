@@ -9,6 +9,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Set;
@@ -20,28 +21,4 @@ public class BookapiApplication {
 		SpringApplication.run(BookapiApplication.class, args);
 	}
 
-	@Bean
-	public CommandLineRunner addDefaults(RoleRepository roleRepository,
-										 UserRepository userRepository,
-										 PasswordEncoder passwordEncoder) {
-		return args -> {
-			if (roleRepository.findByName(RoleType.ROLE_USER).isEmpty()) {
-			roleRepository.save(Role.builder().name(RoleType.ROLE_USER).build());
-		}
-		if (roleRepository.findByName(RoleType.ROLE_USER).isEmpty()) {
-			roleRepository.save(Role.builder().name(RoleType.ROLE_ADMIN).build());
-		}
-		if(userRepository.findByUsername("admin").isEmpty()) {
-			Role adminRole = roleRepository.findByName(RoleType.ROLE_ADMIN).orElseThrow();
-
-			User admin = User.builder()
-					.username("admin")
-					.password(passwordEncoder.encode("123"))
-					.roles(Set.of(adminRole))
-					.build();
-
-			userRepository.save(admin);
-		}
-		};
-	}
 }

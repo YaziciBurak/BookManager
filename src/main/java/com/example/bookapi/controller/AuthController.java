@@ -11,6 +11,7 @@ import com.example.bookapi.util.CookieUtils;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,12 +32,13 @@ public class AuthController {
     private final TokenCookieService tokenCookieService;
 
     @PostMapping("/register")
-    public AuthResponse register(@RequestBody RegisterRequest request) {
+    public AuthResponse register(@Valid @RequestBody RegisterRequest request) {
         return authService.register(request);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request, HttpServletResponse response) {
+    public ResponseEntity<AuthResponse> login(
+            @Valid @RequestBody LoginRequest request, HttpServletResponse response) {
         AuthResponse authResponse = authService.login(request);
 
         Cookie refreshCookie = tokenCookieService.createRefreshTokenCookie(authResponse.getRefreshToken());
@@ -50,7 +52,7 @@ public class AuthController {
     public ResponseEntity<AuthResponse> refreshToken(HttpServletRequest request) {
         Optional<Cookie> refreshCookie = CookieUtils.getCookie(request, CookieConstants.REFRESH_TOKEN);
 
-        if(refreshCookie.isEmpty()) {
+        if (refreshCookie.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
@@ -75,14 +77,15 @@ public class AuthController {
         return ResponseEntity.ok(SuccessMessages.LOGOUT_SUCCESS);
     }
 
-    @GetMapping("/refresh-token-cookie")
-    public ResponseEntity<AuthResponse> refreshTokenFromCookie(
-            @CookieValue(name ="refreshToken", required = false) String refreshToken
-    ) {
-        if(refreshToken == null || refreshToken.isEmpty()) {
+    @PostMapping("/refresh-token-cookie")
+    public ResponseEntity<AuthResponse> refreshTokenFromCookie(HttpServletRequest request) {
+        Optional<Cookie> cookie = CookieUtils.getCookie(request, "refreshToken");
+
+        if (cookie.isEmpty() || cookie.get().getValue().isBlank()) {
             return ResponseEntity.badRequest().build();
         }
 
+        String refreshToken = cookie.get().getValue();
         AuthResponse authResponse = authService.refreshToken(refreshToken);
         return ResponseEntity.ok(authResponse);
     }
