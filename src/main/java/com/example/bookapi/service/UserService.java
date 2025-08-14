@@ -4,6 +4,7 @@ import com.example.bookapi.constants.ErrorMessages;
 import com.example.bookapi.entity.Role;
 import com.example.bookapi.entity.User;
 import com.example.bookapi.enums.RoleType;
+import com.example.bookapi.exception.type.UserNotFoundException;
 import com.example.bookapi.repository.RoleRepository;
 import com.example.bookapi.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -21,7 +22,7 @@ public class UserService {
     @Transactional
     public void addRoleToUser(String username, RoleType roleName) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(ErrorMessages.USER_NOT_FOUND));
+                .orElseThrow(() -> new UserNotFoundException(username));
         Role role = roleRepository.findByName(roleName)
                 .orElseThrow(() -> new RuntimeException(ErrorMessages.ROLE_NOT_FOUND));
 
