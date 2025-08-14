@@ -3,7 +3,7 @@ package com.example.bookapi.service;
 import com.example.bookapi.dto.BookResponseDto;
 import com.example.bookapi.dto.BookRequestDto;
 import com.example.bookapi.entity.Book;
-import com.example.bookapi.exception.BookNotFoundException;
+import com.example.bookapi.exception.type.BookNotFoundException;
 import com.example.bookapi.dto.BookMapper;
 import com.example.bookapi.repository.BookRepository;
 import org.junit.jupiter.api.Test;
